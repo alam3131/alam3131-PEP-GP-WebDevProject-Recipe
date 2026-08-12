@@ -51,6 +51,7 @@ async function processLogin() {
 
     if (username === "" || password === "") {
         alert("Please fill in all fields.");
+        return;
     }
 
     // TODO: Create a requestBody object with username and password
@@ -76,27 +77,46 @@ async function processLogin() {
 
     try {
         // TODO: Send POST request to http://localhost:8081/login using fetch with requestOptions
+        let HTTPResponse = await fetch("http://localhost:8081/login", requestOptions);
 
         // TODO: If response status is 200
         // - Read the response as text
         // - Response will be a space-separated string: "token123 true"
         // - Split the string into token and isAdmin flag
         // - Store both in sessionStorage using sessionStorage.setItem()
+        if (HTTPResponse.status === 200) {
+            let textData = await HTTPResponse.text();
+            let splitData = textData.split(" ");
+            sessionStorage.setItem("auth-token", splitData[0]);
+            sessionStorage.setItem("is-admin", splitData[1]);
+        
+            // TODO: Optionally show the logout button if applicable
+            if (logoutButton.hidden) {
+                logoutButton.hidden = false;
+            }
 
-        // TODO: Optionally show the logout button if applicable
-
-        // TODO: Add a small delay (e.g., 500ms) using setTimeout before redirecting
-        // - Use window.location.href to redirect to the recipe page
-
+            // TODO: Add a small delay (e.g., 500ms) using setTimeout before redirecting
+            // - Use window.location.href to redirect to the recipe page
+            setTimeout(() => {
+                window.location.href = "/recipes";
+            }, 500);
+        }
         // TODO: If response status is 401
         // - Alert the user with "Incorrect login!"
-
+        else if (HTTPResponse.status === 401) {
+            throw new Error("Incorrect login!");
+        }
         // TODO: For any other status code
         // - Alert the user with a generic error like "Unknown issue!"
+        else {
+            throw new Error("Unknown issue!");
+        }
 
     } catch (error) {
         // TODO: Handle any network or unexpected errors
         // - Log the error and alert the user
+        console.log(error.message);
+        alert("Error Message: " + error.message);
     }
 }
 
