@@ -9,10 +9,17 @@ const BASE_URL = "http://localhost:8081"; // backend URL
  * - usernameInput, emailInput, passwordInput, repeatPasswordInput, registerButton
  */
 
+let usernameInput = document.getElementById("username-input");
+let emailInput = document.getElementById("email-input");
+let passwordInput = document.getElementById("password-input");
+let repeatPasswordInput = document.getElementById("repeat-password-input");
+let registerButton = document.getElementById("register-button");
+
 
 /* 
  * TODO: Ensure the register button calls processRegistration when clicked
  */
+registerButton.addEventListener('click', processRegistration);
 
 
 /**
@@ -40,10 +47,24 @@ const BASE_URL = "http://localhost:8081"; // backend URL
  */
 async function processRegistration() {
     // Implement registration logic here
+    let username = usernameInput.value.trim();
+    let email = emailInput.value.trim();
+    let password = passwordInput.value.trim();
+    let repeatPassword = repeatPasswordInput.value.trim();
+
+    if (username === "" || password === "" || email === "" || repeatPassword === "") {
+        alert("Please fill in all fields.");
+        return;
+    }
+
+    if (password !== repeatPassword) {
+        alert("Passwords do not match.");
+        return;
+    }
 
     // Example placeholder:
-    // const registerBody = { username, email, password };
-const requestOptions = {
+    const registerBody = { username, email, password };
+    const requestOptions = {
         method: "POST",
         mode: "cors",
         cache: "no-cache",
@@ -57,5 +78,21 @@ const requestOptions = {
         referrerPolicy: "no-referrer",
         body: JSON.stringify(registerBody)
     };
-    // await fetch(...)
+
+    try {
+        // await fetch(...)
+        let response = await fetch(`${BASE_URL}/register`, requestOptions);
+
+        if (response.status === 201) {
+            window.location.href = "/login";
+        } else if (response.status === 409) {
+            throw new Error("Username/email already exists");
+        } else {
+            throw new Error("Registration Error!");
+        }
+
+    } catch (error) {
+        console.log(error.message);
+        alert("Error Message: " + error.message);
+    }
 }
