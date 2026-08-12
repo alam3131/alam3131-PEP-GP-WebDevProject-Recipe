@@ -11,12 +11,16 @@ const BASE_URL = "http://localhost:8081"; // backend URL
  * - login button
  * - logout button (optional, for token testing)
  */
+let usernameField = document.getElementById("login-input");
+let passwordField = document.getElementById("password-input");
+let loginButton = document.getElementById("login-button");
+let logoutButton = document.getElementById("logout-button");
 
 /* 
  * TODO: Add click event listener to login button
  * - Call processLogin on click
  */
-
+loginButton.addEventListener('click', processLogin);
 
 /**
  * TODO: Process Login Function
@@ -42,8 +46,18 @@ const BASE_URL = "http://localhost:8081"; // backend URL
 async function processLogin() {
     // TODO: Retrieve username and password from input fields
     // - Trim input and validate that neither is empty
+    let username = usernameField.value.trim();
+    let password = passwordField.value.trim();
+
+    if (username === "" || password === "") {
+        alert("Please fill in all fields.");
+    }
 
     // TODO: Create a requestBody object with username and password
+    const requestBody = {
+        username: username,
+        password: password
+    };
 
     const requestOptions = {
         method: "POST",
