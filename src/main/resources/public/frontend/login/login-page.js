@@ -98,7 +98,7 @@ async function processLogin() {
             // TODO: Add a small delay (e.g., 500ms) using setTimeout before redirecting
             // - Use window.location.href to redirect to the recipe page
             setTimeout(() => {
-                window.location.href = "recipe-page.html";
+                window.location.href = "../recipe/recipe-page.html";
             }, 500);
         }
         // TODO: If response status is 401

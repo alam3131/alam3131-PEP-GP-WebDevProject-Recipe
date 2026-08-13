@@ -63,11 +63,7 @@ window.addEventListener("DOMContentLoaded", () => {
     /*
      * TODO: On page load, call getRecipes() to populate the list
      */
-
-    document.addEventListener("DOMContentLoaded", () => {
-        getRecipes();
-    });
-
+    getRecipes();
 
     /**
      * TODO: Search Recipes Function
@@ -84,8 +80,14 @@ window.addEventListener("DOMContentLoaded", () => {
                     method: "GET"
                 }
             );
-            recipes = await response.json();
-            refreshRecipeList();
+
+            if (response.status === 200) {
+                recipes = await response.json();
+                refreshRecipeList();
+            } else {
+                throw new Error("Search recipe unsuccessful.");
+            }
+            
         } catch(error) {
             console.log("Error Message: ", error.message);
             alert("Error Message: " + error.message);
@@ -102,6 +104,45 @@ window.addEventListener("DOMContentLoaded", () => {
      */
     async function addRecipe() {
         // Implement add logic here
+        const token = sessionStorage.getItem("auth-token");
+        let recipeName = addName.value.trim();
+        let recipeInstructions = addInstructions.value.trim();
+        
+        if (recipeName === "" || recipeInstructions === "") {
+            alert("Please fill in all fields.");
+            return;
+        }
+
+        const recipeBody = {
+            name: recipeName,
+            instructions: recipeInstructions
+        };
+
+        try {
+            let response = await fetch(`${BASE_URL}/recipes`,     
+                {
+                    method: "POST",
+                    headers: {
+                        "Authorization": `Bearer ${token}`,
+                        "Content-Type": "application/json"
+                    },
+                    body: JSON.stringify(recipeBody)
+                }
+            );
+            
+            if (response.status === 201) {
+                addName.value = "";
+                addInstructions.value = "";
+                await getRecipes();
+            } else {
+                throw new Error("Add recipe unsuccessful.");
+            }
+            
+        } catch(error) {
+            console.log("Error Message: ", error.message);
+            alert("Error Message: " + error.message);
+        }
+
     }
 
     /**
@@ -169,7 +210,7 @@ window.addEventListener("DOMContentLoaded", () => {
 
             if (response.status === 200) {
                 sessionStorage.clear();
-                window.location.href = "login-page.html";
+                window.location.href = "../login/login-page.html";
             } else {
                 throw new Error("Logout unsuccessful.");
             }
