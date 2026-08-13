@@ -156,6 +156,27 @@ window.addEventListener("DOMContentLoaded", () => {
      */
     async function processLogout() {
         // Implement logout logic here
+        const token = sessionStorage.getItem("auth-token");
+        try {
+            let response = await fetch(`${BASE_URL}/logout`,     
+                {
+                    method: "POST",
+                    headers: {
+                        "Authorization": `Bearer ${token}`
+                    }
+                }
+            );
+
+            if (response.status === 200) {
+                sessionStorage.clear();
+                window.location.href = "/login";
+            } else {
+                throw new Error("Logout unsuccessful.");
+            }
+        } catch(error) {
+            console.log(error.message);
+            alert("Error Message: " + error.message);
+        }
     }
 
 });
