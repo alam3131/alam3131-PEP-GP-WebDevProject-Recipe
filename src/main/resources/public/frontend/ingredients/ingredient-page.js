@@ -154,7 +154,7 @@ window.addEventListener("DOMContentLoaded", () => {
                 }
             );
     
-            if (response.status === 200) {
+            if (response.status === 204) {
                 deleteIngredientNameInput.value = "";
                 await getIngredients();
             } else {
