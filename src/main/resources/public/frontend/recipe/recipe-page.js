@@ -169,7 +169,7 @@ window.addEventListener("DOMContentLoaded", () => {
 
             if (response.status === 200) {
                 sessionStorage.clear();
-                window.location.href = "/login";
+                window.location.href = "login-page.html";
             } else {
                 throw new Error("Logout unsuccessful.");
             }

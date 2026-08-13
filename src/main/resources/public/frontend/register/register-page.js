@@ -84,7 +84,7 @@ async function processRegistration() {
         let response = await fetch(`${BASE_URL}/register`, requestOptions);
 
         if (response.status === 201) {
-            window.location.href = "/login";
+            window.location.href = "../login/login-page.html";
         } else if (response.status === 409) {
             throw new Error("Username/email already exists");
         } else {
