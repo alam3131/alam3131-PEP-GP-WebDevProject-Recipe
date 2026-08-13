@@ -155,6 +155,60 @@ window.addEventListener("DOMContentLoaded", () => {
      */
     async function updateRecipe() {
         // Implement update logic here
+        const token = sessionStorage.getItem("auth-token");
+        let recipeName = updateName.value.trim();
+        let instructions = updateInstructions.value.trim();
+
+        if (recipeName === "" || instructions === "") {
+            alert("Please fill in all fields.");
+            return;
+        }
+
+        try {
+            let allRecipesResponse = await fetch(`${BASE_URL}/recipes`,     
+                {
+                    method: "GET"
+                }
+            );
+
+            if (allRecipesResponse.status === 200) {
+                let results = await allRecipesResponse.json();
+                let recipe = results.find(r => r.name === recipeName);
+
+                if (!recipe) {
+                    throw new Error("Recipe not found.");
+                }
+
+                const recipeBody = {
+                    name: recipeName,
+                    instructions: instructions
+                };
+
+                let response = await fetch(`${BASE_URL}/recipes/${recipe.id}`,     
+                    {
+                        method: "PUT",
+                        headers: {
+                            "Authorization": `Bearer ${token}`,
+                            "Content-Type": "application/json"
+                        },
+                        body: JSON.stringify(recipeBody)
+                    }
+                );
+
+                if (response.status === 200) {
+                    updateName.value = "";
+                    updateInstructions.value = "";
+                    await getRecipes();
+                } else {
+                    throw new Error("Update recipe unsuccessful.");
+                }
+            } else {
+                throw new Error("Recipe fetch unsuccessful.");
+            }
+        } catch(error) {
+            console.log(error.message);
+            alert("Error Message: " + error.message);
+        }
     }
 
     /**
@@ -166,6 +220,51 @@ window.addEventListener("DOMContentLoaded", () => {
      */
     async function deleteRecipe() {
         // Implement delete logic here
+        const token = sessionStorage.getItem("auth-token");
+        let recipeName = deleteName.value.trim();
+
+        if (recipeName === "") {
+            alert("Please enter a recipe name.");
+            return;
+        }
+
+        try {
+            let allRecipesResponse = await fetch(`${BASE_URL}/recipes`,     
+                {
+                    method: "GET"
+                }
+            );
+
+            if (allRecipesResponse.status === 200) {
+                let results = await allRecipesResponse.json();
+                let recipe = results.find(r => r.name === recipeName);
+
+                if (!recipe) {
+                    throw new Error("Recipe not found.");
+                }
+
+                let response = await fetch(`${BASE_URL}/recipes/${recipe.id}`,     
+                    {
+                        method: "DELETE",
+                        headers: {
+                            "Authorization": `Bearer ${token}`
+                        },
+                    }
+                );
+
+                if (response.status === 200) {
+                    deleteName.value = "";
+                    await getRecipes();
+                } else {
+                    throw new Error("Delete recipe unsuccessful.");
+                }
+            } else {
+                throw new Error("Recipe fetch unsuccessful.");
+            }
+        } catch(error) {
+            console.log(error.message);
+            alert("Error Message: " + error.message);
+        }
     }
 
     /**
@@ -176,6 +275,23 @@ window.addEventListener("DOMContentLoaded", () => {
      */
     async function getRecipes() {
         // Implement get logic here
+        try {
+            let allRecipesResponse = await fetch(`${BASE_URL}/recipes`,     
+                {
+                    method: "GET"
+                }
+            );
+
+            if (allRecipesResponse.status === 200) {
+                recipes = await allRecipesResponse.json();
+                refreshRecipeList();
+            } else {
+                throw new Error("All recipe fetch unsuccessful.");
+            }
+        } catch (error) {
+            console.log(error.message);
+            alert("Error Message: " + error.message);
+        }
     }
 
     /**
@@ -186,6 +302,18 @@ window.addEventListener("DOMContentLoaded", () => {
      */
     function refreshRecipeList() {
         // Implement refresh logic here
+        recipeList.replaceChildren();
+
+        for (let i = 0; i < recipes.length; i++) {
+            // 1. Create the <li> element
+            const li = document.createElement('li');
+
+            // 2. Add text content safely
+            li.textContent = recipes[i].name + ": " + recipes[i].instructions;
+
+            // 3. Add to the <ul>
+            recipeList.append(li);
+        }
     }
 
     /**
