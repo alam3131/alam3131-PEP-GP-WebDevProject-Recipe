@@ -16,14 +16,34 @@ window.addEventListener("DOMContentLoaded", () => {
      * - Admin link and logout button
      * - Search input
     */
+    let adminLink = document.getElementById("admin-link");
+    let logoutButton = document.getElementById("logout-button");
+    let searchInput = document.getElementById("search-input");
+    let searchButton = document.getElementById("search-button");
+    let recipeList = document.getElementById("recipe-list");
+    let addName = document.getElementById("add-recipe-name-input");
+    let addInstructions = document.getElementById("add-recipe-instructions-input");
+    let addSubmit = document.getElementById("add-recipe-submit-input");
+    let updateName = document.getElementById("update-recipe-name-input");
+    let updateInstructions = document.getElementById("update-recipe-instructions-input");
+    let updateSubmit = document.getElementById("update-recipe-submit-input");
+    let deleteName = document.getElementById("delete-recipe-name-input");
+    let deleteSubmit = document.getElementById("delete-recipe-submit-input");
 
     /*
      * TODO: Show logout button if auth-token exists in sessionStorage
      */
+    if (sessionStorage.getItem("auth-token") !== null) {
+        logoutButton.hidden = false;
+    }
 
     /*
      * TODO: Show admin link if is-admin flag in sessionStorage is "true"
      */
+
+    if (sessionStorage.getItem("is-admin") !== null) {
+        adminLink.hidden = false;
+    }
 
     /*
      * TODO: Attach event handlers
@@ -33,10 +53,20 @@ window.addEventListener("DOMContentLoaded", () => {
      * - Search button → searchRecipes()
      * - Logout button → processLogout()
      */
+    addSubmit.addEventListener("click", addRecipe);
+    updateSubmit.addEventListener("click", updateRecipe);
+    deleteSubmit.addEventListener("click", deleteRecipe);
+    searchButton.addEventListener("click", searchRecipes);
+    logoutButton.addEventListener("click", processLogout);
+
 
     /*
      * TODO: On page load, call getRecipes() to populate the list
      */
+
+    document.addEventListener("DOMContentLoaded", () => {
+        getRecipes();
+    });
 
 
     /**
@@ -47,7 +77,8 @@ window.addEventListener("DOMContentLoaded", () => {
      * - Handle fetch errors and alert user
      */
     async function searchRecipes() {
-        // Implement search logic here
+        let searchTerm = searchInput.value.trim();
+        // let response = await fetch("http://localhost:8081/", requestOptions);
     }
 
     /**
