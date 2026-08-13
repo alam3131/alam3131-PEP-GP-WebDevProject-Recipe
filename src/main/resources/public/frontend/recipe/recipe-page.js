@@ -78,7 +78,18 @@ window.addEventListener("DOMContentLoaded", () => {
      */
     async function searchRecipes() {
         let searchTerm = searchInput.value.trim();
-        // let response = await fetch("http://localhost:8081/", requestOptions);
+        try {
+            let response = await fetch(`${BASE_URL}/recipes?name=${encodeURIComponent(searchTerm)}`,     
+                {
+                    method: "GET"
+                }
+            );
+            recipes = await response.json();
+            refreshRecipeList();
+        } catch(error) {
+            console.log("Error Message: ", error.message);
+            alert("Error Message: " + error.message);
+        }
     }
 
     /**
